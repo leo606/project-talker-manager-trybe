@@ -31,6 +31,7 @@ route.get('/', async (_req, res, _next) => {
 
 const tokenCheck = require('../utils/tokenCheck');
 const { talkCheck, talkerCheck } = require('../utils/talkerCheck');
+const writeTalker = require('../utils/writeTalker');
 
 route.use(tokenCheck);
 
@@ -42,8 +43,16 @@ route.use((err, _req, res, _next) => {
   res.status(err.status).json({ message: err.message });
 });
 
-route.post('/', (req, res) => {
-  res.status(201).json({ message: 'ok' });
-});
+route.post('/',
+  async (req, res) => {
+    try {
+      const data = JSON.parse(await readTalker());
+      const newTalker = { ...req.body, id: data.length + 1 };
+      await writeTalker([...data, newTalker]);
+      res.status(201).json(newTalker);
+    } catch (error) {
+      console.log(error);
+    }
+  });
 
 module.exports = route;
