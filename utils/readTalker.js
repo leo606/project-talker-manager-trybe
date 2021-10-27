@@ -1,9 +1,9 @@
 const fs = require('fs').promises;
 // const sdf = require('../talker.json')
 
-module.exports = async function readTalker(path) {
+module.exports = async function readTalker() {
   try {
-    const data = await fs.readFile(path, 'utf-8');
+    const data = await fs.readFile(`${__dirname}/../talker.json`, 'utf-8');
     return data;
   } catch (error) {
     console.log(error);
