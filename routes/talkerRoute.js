@@ -1,8 +1,26 @@
 const express = require('express');
 const readTalker = require('../utils/readTalker');
 const writeTalker = require('../utils/writeTalker');
+const { talkCheck, talkerCheck } = require('../utils/talkerCheck');
+const tokenCheck = require('../utils/tokenCheck');
 
 const route = express.Router();
+
+route.get('/search',
+  tokenCheck,
+  async (req, res, _next) => {
+    const { q } = req.query;
+    try {
+      const data = JSON.parse(await readTalker());
+      if (!q || q === ' ') {
+        return res.status(200).json(data);
+      }      
+      const filtered = data.filter((talker) => talker.name.includes(q));
+      res.status(200).json(filtered);
+    } catch (error) {
+      console.log(error);
+    }
+  });
 
 route.get('/:id', async (req, res, _next) => {
   const { id } = req.params;
@@ -29,7 +47,6 @@ route.get('/', async (_req, res, _next) => {
     console.log(error);
   }
 });
-const tokenCheck = require('../utils/tokenCheck');
 
 route.use(tokenCheck);
 
@@ -46,10 +63,7 @@ route.delete('/:id',
     }
   });
 
-const { talkCheck, talkerCheck } = require('../utils/talkerCheck');
-
 route.use(talkCheck);
-
 route.use(talkerCheck);
 
 route.use((err, _req, res, _next) => {
