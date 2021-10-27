@@ -29,4 +29,21 @@ route.get('/', async (_req, res, _next) => {
   }
 });
 
+const tokenCheck = require('../utils/tokenCheck');
+const { talkCheck, talkerCheck } = require('../utils/talkerCheck');
+
+route.use(tokenCheck);
+
+route.use(talkCheck);
+
+route.use(talkerCheck);
+
+route.use((err, _req, res, _next) => {
+  res.status(err.status).json({ message: err.message });
+});
+
+route.post('/', (req, res) => {
+  res.status(201).json({ message: 'ok' });
+});
+
 module.exports = route;

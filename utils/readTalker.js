@@ -1,5 +1,4 @@
 const fs = require('fs').promises;
-// const sdf = require('../talker.json')
 
 module.exports = async function readTalker() {
   try {
