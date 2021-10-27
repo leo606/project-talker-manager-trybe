@@ -1,5 +1,6 @@
 const express = require('express');
 const readTalker = require('../utils/readTalker');
+const writeTalker = require('../utils/writeTalker');
 
 const route = express.Router();
 
@@ -28,12 +29,24 @@ route.get('/', async (_req, res, _next) => {
     console.log(error);
   }
 });
-
 const tokenCheck = require('../utils/tokenCheck');
-const { talkCheck, talkerCheck } = require('../utils/talkerCheck');
-const writeTalker = require('../utils/writeTalker');
 
 route.use(tokenCheck);
+
+route.delete('/:id',
+  async (req, res, _next) => {
+    const { id } = req.params;
+    try {
+      const data = JSON.parse(await readTalker());
+      const deleted = data.filter((talker) => talker.id !== +id);
+      await writeTalker(deleted);
+      res.status(200).json({ message: 'Pessoa palestrante deletada com sucesso' });
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+const { talkCheck, talkerCheck } = require('../utils/talkerCheck');
 
 route.use(talkCheck);
 
@@ -61,10 +74,9 @@ route.put('/:id',
     try {
       const data = JSON.parse(await readTalker());
       const talkerIndex = data.findIndex((talker) => talker.id === +id);
-      // const editedTalker = { ...req.body, id: +id };
       data[talkerIndex] = { ...req.body, id: +id };
-      res.status(200).json({ ...req.body, id: +id });
       await writeTalker(data);
+      res.status(200).json({ ...req.body, id: +id });
     } catch (error) {
       console.log(error);
     }
