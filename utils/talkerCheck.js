@@ -39,7 +39,7 @@ function checkTalk(talk) {
 function talkCheck(req, res, next) {
   const { talk } = req.body;
   
-  if (!talk || !talk.rate || !talk.watchedAt) {
+  if (!talk || !(Object.keys(talk).includes('rate') && Object.keys(talk).includes('watchedAt'))) {
     return next({
       status,
       message: 'O campo "talk" é obrigatório e "watchedAt" e "rate" não podem ser vazios',

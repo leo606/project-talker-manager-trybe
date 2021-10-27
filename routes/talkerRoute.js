@@ -55,4 +55,19 @@ route.post('/',
     }
   });
 
+route.put('/:id',
+  async (req, res, _next) => {
+    const { id } = req.params;
+    try {
+      const data = JSON.parse(await readTalker());
+      const talkerIndex = data.findIndex((talker) => talker.id === +id);
+      // const editedTalker = { ...req.body, id: +id };
+      data[talkerIndex] = { ...req.body, id: +id };
+      res.status(200).json({ ...req.body, id: +id });
+      await writeTalker(data);
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
 module.exports = route;
