@@ -5,7 +5,8 @@ const route = express.Router();
 
 const loginCheck = require('../utils/loginCheck');
 
-route.use(loginCheck);
+route.use(loginCheck.emailCheck, loginCheck.passwordCheck);
+
 route.use((err, _req, res, _next) => {
   res.status(err.status).json({ message: err.message });
 });
